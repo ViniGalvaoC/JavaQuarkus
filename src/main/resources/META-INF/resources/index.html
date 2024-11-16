@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Marcas de Carros</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        #carros {
+            margin-top: 20px;
+        }
+        .carro {
+            padding: 10px;
+            border: 1px solid #ccc;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+
+        .focado { background-color: #e0e0e0; transform: scale(1.05); } 
+       
+        .desfocado { opacity: 0.5; } 
+        
+        button { width: 100%; padding: 10px; font-size: 16px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>Marcas de Carros</h1>
+    <button onclick="carregarCarros()">Carregar Marcas</button>
+    <div id="carros"></div>
+
+    <script>
+        function carregarCarros() {
+            fetch('/hello')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Erro ao buscar dados');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    const carrosDiv = document.getElementById('carros');
+                    carrosDiv.innerHTML = '';
+                    data.forEach(carro => {
+                        const carroDiv = document.createElement('button');
+                        carroDiv.className = 'carro';
+                        carroDiv.innerHTML = `<strong>Código:</strong> ${carro.codigo} <br> <strong>Nome:</strong> ${carro.nome}`;
+                        //carroDiv.onmouseover = () => { carroDiv.classList.add('focado'); desfocarOutrosBotoes(carroDiv); }; 
+                        //carroDiv.onmouseout = () => { carroDiv.classList.remove('focado'); focarTodosBotoes(); };
+                        carroDiv.classList.add('focado')
+                        carroDiv.onmouseover = () => {
+                            carroDiv.classList.add('focado')
+                            // const botoes = document.querySelectorAll('.carro');
+                            // botoes.forEach(btn => {
+                            //     if( btn !== carroDiv){
+                            //         btn.classList.add('desfocado')
+                            //     }
+                            // });
+                            desfocarOutrosBotoes(carroDiv);
+                        };
+
+                        carroDiv.onmouseout = () => {
+                            // carroDiv.classList.add('focado')
+                            // const botoes = document.querySelectorAll('.carro');
+                            // botoes.forEach(btn => {
+                                
+                            //         btn.classList.add('desfocado')
+                                
+                            // });
+                            focarTodosBotoes();
+                        };
+
+                        carroDiv.onclick = () => {
+                            alert(`Você clicou em: ${carro.nome}`);
+                        }
+                        carrosDiv.appendChild(carroDiv);
+                    });
+                })
+                .catch(error => {
+                    console.error('Erro:', error);
+                    alert('Erro ao carregar marcas de carros.');
+                });
+        }
+        function desfocarOutrosBotoes(focado) { const botoes = document.querySelectorAll('.carro'); botoes.forEach(botao => { if (botao !== focado) { botao.classList.add('desfocado'); } });}
+        function focarTodosBotoes() { const botoes = document.querySelectorAll('.carro'); botoes.forEach(botao => { botao.classList.remove('desfocado'); }); }
+        //function desfocarOutrosBotoes(focado) { const botoes = document.querySelectorAll('.carro'); botoes.forEach(botao => { if (botao !== focado) { botao.classList.add('desfocado'); } }); } 
+        //function focarTodosBotoes() { const botoes = document.querySelectorAll('.carro'); botoes.forEach(botao => { botao.classList.remove('desfocado'); }); }
+    </script>
+</body>
+</html>

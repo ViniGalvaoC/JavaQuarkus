@@ -1,5 +1,14 @@
 package br.com.herrittt.models;
 
-public record MarcaCarro(String codigo, String nome) {
+import com.fasterxml.jackson.annotation.JsonProperty;
 
+public class MarcaCarro{
+
+    @JsonProperty("codigo")
+    String codigo;
+
+    @JsonProperty("nome")
+    String nome;
+
+    //@Override public String toString() { return "{" + "codigo='" + codigo + '\'' + ", nome='" + nome + '\'' + '}'; }
 }
