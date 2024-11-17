@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import br.com.herrittt.ApiServices.FipeApiCarrosClient;
 import br.com.herrittt.models.MarcaCarro;
+import br.com.herrittt.models.ModeloCarro;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
@@ -22,5 +23,7 @@ public class FipeApiCarrosService {
         return fipeApiCarrosClient.getMarcasCarros();
     }
 
-
+    public JsonNode getModelosById(int id){
+        return fipeApiCarrosClient.getModelosById(id);
+    }
 }

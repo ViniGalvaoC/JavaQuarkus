@@ -32,7 +32,7 @@
 
     <script>
         function carregarCarros() {
-            fetch('/hello')
+            fetch('/API-FIPE/marcas')
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Erro ao buscar dados');
@@ -45,35 +45,44 @@
                     data.forEach(carro => {
                         const carroDiv = document.createElement('button');
                         carroDiv.className = 'carro';
-                        carroDiv.innerHTML = `<strong>Código:</strong> ${carro.codigo} <br> <strong>Nome:</strong> ${carro.nome}`;
-                        //carroDiv.onmouseover = () => { carroDiv.classList.add('focado'); desfocarOutrosBotoes(carroDiv); }; 
-                        //carroDiv.onmouseout = () => { carroDiv.classList.remove('focado'); focarTodosBotoes(); };
+                        carroDiv.innerHTML = `<strong>Id:</strong> ${carro.codigo} <br> <strong>Marca:</strong> ${carro.nome}`;
                         carroDiv.classList.add('focado')
                         carroDiv.onmouseover = () => {
                             carroDiv.classList.add('focado')
-                            // const botoes = document.querySelectorAll('.carro');
-                            // botoes.forEach(btn => {
-                            //     if( btn !== carroDiv){
-                            //         btn.classList.add('desfocado')
-                            //     }
-                            // });
                             desfocarOutrosBotoes(carroDiv);
                         };
 
                         carroDiv.onmouseout = () => {
-                            // carroDiv.classList.add('focado')
-                            // const botoes = document.querySelectorAll('.carro');
-                            // botoes.forEach(btn => {
-                                
-                            //         btn.classList.add('desfocado')
-                                
-                            // });
                             focarTodosBotoes();
                         };
 
                         carroDiv.onclick = () => {
-                            alert(`Você clicou em: ${carro.nome}`);
-                        }
+                            fetch(`/API-FIPE/${carro.codigo}/modelos`)
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error('Erro ao buscar dados');
+                                }
+                                return response.json();
+                            })
+                            .then(data => {
+                                const modelosDiv = document.getElementById('carros');
+                                modelosDiv.innerHTML = '';
+                                data.forEach(modelo => {
+                                    const modelosDiv = document.createElement('button');
+                                    modelosDiv.className = 'carro';
+                                    modelosDiv.innerHTML = `<strong>Id:</strong> ${carro.codigo} <br> <strong>Modelo:</strong> ${carro.nome}`;
+                                    modelosDiv.classList.add('focado')
+                                    modelosDiv.onmouseover = () => {
+                                        modelosDiv.classList.add('focado')
+                                        desfocarOutrosBotoes(modelosDiv);
+                                    };
+
+                                    modelosDiv.onmouseout = () => {
+                                        focarTodosBotoes();
+                                    };
+                                });
+                            })
+                        };
                         carrosDiv.appendChild(carroDiv);
                     });
                 })
@@ -84,8 +93,6 @@
         }
         function desfocarOutrosBotoes(focado) { const botoes = document.querySelectorAll('.carro'); botoes.forEach(botao => { if (botao !== focado) { botao.classList.add('desfocado'); } });}
         function focarTodosBotoes() { const botoes = document.querySelectorAll('.carro'); botoes.forEach(botao => { botao.classList.remove('desfocado'); }); }
-        //function desfocarOutrosBotoes(focado) { const botoes = document.querySelectorAll('.carro'); botoes.forEach(botao => { if (botao !== focado) { botao.classList.add('desfocado'); } }); } 
-        //function focarTodosBotoes() { const botoes = document.querySelectorAll('.carro'); botoes.forEach(botao => { botao.classList.remove('desfocado'); }); }
     </script>
 </body>
 </html>

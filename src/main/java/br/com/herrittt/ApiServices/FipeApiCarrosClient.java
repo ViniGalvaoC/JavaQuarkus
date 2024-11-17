@@ -7,10 +7,12 @@ import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import br.com.herrittt.models.MarcaCarro;
+import br.com.herrittt.models.ModeloCarro;
 import io.smallrye.mutiny.Uni;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 
@@ -22,4 +24,9 @@ public interface FipeApiCarrosClient {
     @Path("/marcas")
     @Produces(MediaType.APPLICATION_JSON)
     List<MarcaCarro> getMarcasCarros();
+
+    @GET
+    @Path("/marcas/{id}/modelos")
+    @Produces(MediaType.APPLICATION_JSON)
+    JsonNode getModelosById(@PathParam("id") int id);
 }

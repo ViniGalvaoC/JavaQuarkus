@@ -2,11 +2,11 @@ package br.com.herrittt.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class MarcaCarro{
+public class ModeloCarro {
 
     @JsonProperty("codigo")
-    String codigo;
+    int codigo;
 
     @JsonProperty("nome")
-    String marca;
+    String modelo;
 }
