@@ -7,10 +7,10 @@
         body {
             font-family: Arial, sans-serif;
         }
-        #carros {
+        #carros #modelos {
             margin-top: 20px;
         }
-        .carro {
+        .carro .modelo{
             padding: 10px;
             border: 1px solid #ccc;
             margin-bottom: 10px;
@@ -29,9 +29,16 @@
     <h1>Marcas de Carros</h1>
     <button onclick="carregarCarros()">Carregar Marcas</button>
     <div id="carros"></div>
+    <div id="modelos"></div>
 
     <script>
+        let carrosCache = null;
         function carregarCarros() {
+            document.getElementById('modelos').innerHTML = '';
+            if (carrosCache) {
+        exibirCarros(carrosCache);  // Se os dados estão no cache, exibe diretamente
+        return;
+    }
             fetch('/API-FIPE/marcas')
                 .then(response => {
                     if (!response.ok) {
@@ -40,7 +47,47 @@
                     return response.json();
                 })
                 .then(data => {
-                    const carrosDiv = document.getElementById('carros');
+                    carrosCache = data;
+                    exibirCarros(data);
+                })
+                .catch(error => {
+                    console.error('Erro:', error);
+                    alert('Erro ao carregar marcas de carros.');
+                });
+        }
+        function desfocarOutrosBotoes(focado) { const botoes = document.querySelectorAll('.carro'); botoes.forEach(botao => { if (botao !== focado) { botao.classList.add('desfocado'); } });}
+        function focarTodosBotoes() { const botoes = document.querySelectorAll('.carro'); botoes.forEach(botao => { botao.classList.remove('desfocado'); }); }
+
+        function carregarModelos(codigo){
+            fetch(`/API-FIPE/${codigo}/modelos`)
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error('Erro ao buscar dados');
+                                }
+                                return response.json();
+                            })
+                            .then(data => {
+                                const modelosDiv = document.getElementById('modelos');
+                                modelosDiv.innerHTML = '';
+                                data.forEach(modelo => {
+                                    const modeloDiv = document.createElement('button');
+                                    modeloDiv.className = 'modelo';
+                                    modeloDiv.innerHTML = `<strong>Id:</strong> ${modelo.codigo} <br> <strong>Modelo:</strong> ${modelo.nome}`;
+                                    modeloDiv.classList.add('focado')
+                                    modeloDiv.onmouseover = () => {
+                                        modeloDiv.classList.add('focado')
+                                        desfocarOutrosBotoes(modelosDiv);
+                                    };
+
+                                    modeloDiv.onmouseout = () => {
+                                        focarTodosBotoes();
+                                    };
+                                    modelosDiv.appendChild(modeloDiv)
+                                });
+                            })
+        }
+        function exibirCarros(data) {
+            const carrosDiv = document.getElementById('carros');
                     carrosDiv.innerHTML = '';
                     data.forEach(carro => {
                         const carroDiv = document.createElement('button');
@@ -57,42 +104,12 @@
                         };
 
                         carroDiv.onclick = () => {
-                            fetch(`/API-FIPE/${carro.codigo}/modelos`)
-                            .then(response => {
-                                if (!response.ok) {
-                                    throw new Error('Erro ao buscar dados');
-                                }
-                                return response.json();
-                            })
-                            .then(data => {
-                                const modelosDiv = document.getElementById('carros');
-                                modelosDiv.innerHTML = '';
-                                data.forEach(modelo => {
-                                    const modelosDiv = document.createElement('button');
-                                    modelosDiv.className = 'carro';
-                                    modelosDiv.innerHTML = `<strong>Id:</strong> ${carro.codigo} <br> <strong>Modelo:</strong> ${carro.nome}`;
-                                    modelosDiv.classList.add('focado')
-                                    modelosDiv.onmouseover = () => {
-                                        modelosDiv.classList.add('focado')
-                                        desfocarOutrosBotoes(modelosDiv);
-                                    };
-
-                                    modelosDiv.onmouseout = () => {
-                                        focarTodosBotoes();
-                                    };
-                                });
-                            })
+                            carregarModelos(carro.codigo)
+                            carrosDiv.innerHTML = '';
                         };
                         carrosDiv.appendChild(carroDiv);
                     });
-                })
-                .catch(error => {
-                    console.error('Erro:', error);
-                    alert('Erro ao carregar marcas de carros.');
-                });
         }
-        function desfocarOutrosBotoes(focado) { const botoes = document.querySelectorAll('.carro'); botoes.forEach(botao => { if (botao !== focado) { botao.classList.add('desfocado'); } });}
-        function focarTodosBotoes() { const botoes = document.querySelectorAll('.carro'); botoes.forEach(botao => { botao.classList.remove('desfocado'); }); }
     </script>
 </body>
 </html>

@@ -20,7 +20,7 @@ public class FipeApiCarrosService {
     FipeApiCarrosClient fipeApiCarrosClient;
 
     public List<MarcaCarro> getCarros(){
-        return fipeApiCarrosClient.getMarcasCarros();
+        return fipeApiCarrosClient.getMarcasCarros().stream().limit(5).toList();
     }
 
     public JsonNode getModelosById(int id){
